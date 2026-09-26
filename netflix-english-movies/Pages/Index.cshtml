@@ -1,0 +1,1819 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Netflix";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Netflix Clone</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+            :root {
+                --netflix-red: #e50914;
+                --background: #141414;
+                --card: #181818;
+                --text: #fff;
+                --muted: #b3b3b3;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background: var(--background);
+                color: white;
+                font-family: 'Inter', Arial, sans-serif;
+                overflow-x: hidden;
+            }
+
+            button {
+                font-family: inherit;
+            }
+
+            /* =========================================================
+               NAVBAR
+            ========================================================= */
+
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 68px;
+
+                display: flex;
+                align-items: center;
+
+                padding: 0 4%;
+
+                z-index: 999;
+
+                transition: background .3s ease;
+            }
+
+            .navbar.scrolled {
+                background: #141414;
+            }
+
+            .logo {
+                color: var(--netflix-red);
+                font-size: 30px;
+                font-weight: 900;
+                letter-spacing: -2px;
+
+                margin-right: 42px;
+            }
+
+            .nav-menu {
+                display: flex;
+                gap: 24px;
+                list-style: none;
+            }
+
+            .nav-menu a {
+                color: #e5e5e5;
+                text-decoration: none;
+                font-size: 14px;
+                transition: color .2s;
+            }
+
+            .nav-menu a:hover,
+            .nav-menu a.active {
+                color: #fff;
+                font-weight: 600;
+            }
+
+            .nav-right {
+                margin-left: auto;
+
+                display: flex;
+                align-items: center;
+                gap: 22px;
+            }
+
+            .nav-icon {
+                font-size: 21px;
+                cursor: pointer;
+                color: white;
+            }
+
+            .profile {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                cursor: pointer;
+            }
+
+            .profile img {
+                width: 32px;
+                height: 32px;
+                border-radius: 4px;
+                object-fit: cover;
+            }
+
+            .profile-arrow {
+                font-size: 10px;
+            }
+
+
+            /* =========================================================
+               HERO
+            ========================================================= */
+
+            .hero {
+                position: relative;
+
+                height: 92vh;
+                min-height: 650px;
+
+                background-image:
+                    linear-gradient(
+                        90deg,
+                        rgba(0,0,0,.95) 0%,
+                        rgba(0,0,0,.75) 25%,
+                        rgba(0,0,0,.2) 65%,
+                        rgba(0,0,0,.05) 100%
+                    ),
+                    linear-gradient(
+                        0deg,
+                        #141414 0%,
+                        transparent 25%
+                    ),
+                    url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=2200&q=90");
+
+                background-size: cover;
+                background-position: center;
+            }
+
+            .hero-content {
+                position: absolute;
+
+                left: 5%;
+                top: 32%;
+
+                max-width: 620px;
+            }
+
+            .hero-badge {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                color: #ddd;
+
+                font-size: 14px;
+                font-weight: 600;
+
+                margin-bottom: 15px;
+            }
+
+            .n-logo {
+                color: var(--netflix-red);
+                font-weight: 900;
+                font-size: 20px;
+            }
+
+            .hero-title {
+                font-size: clamp(45px, 6vw, 82px);
+
+                line-height: .95;
+
+                font-weight: 900;
+
+                margin-bottom: 24px;
+
+                letter-spacing: -3px;
+            }
+
+            .hero-meta {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+
+                margin-bottom: 18px;
+
+                font-size: 15px;
+            }
+
+            .match {
+                color: #46d369;
+                font-weight: 700;
+            }
+
+            .rating {
+                border: 1px solid #aaa;
+                padding: 2px 6px;
+                font-size: 12px;
+            }
+
+            .hero-description {
+                color: #ddd;
+
+                font-size: 17px;
+                line-height: 1.55;
+
+                max-width: 550px;
+
+                margin-bottom: 28px;
+            }
+
+            .hero-buttons {
+                display: flex;
+                gap: 12px;
+            }
+
+            .btn {
+                border: none;
+
+                padding: 12px 25px;
+
+                border-radius: 4px;
+
+                display: flex;
+                align-items: center;
+                gap: 9px;
+
+                font-size: 16px;
+                font-weight: 700;
+
+                cursor: pointer;
+
+                transition: .2s;
+            }
+
+            .btn:hover {
+                transform: scale(1.03);
+            }
+
+            .btn-play {
+                background: white;
+                color: black;
+            }
+
+            .btn-info {
+                background: rgba(109,109,110,.7);
+                color: white;
+            }
+
+            .btn-info:hover {
+                background: rgba(109,109,110,.9);
+            }
+
+
+            /* =========================================================
+               AGE / SOUND INDICATOR
+            ========================================================= */
+
+            .hero-rating {
+                position: absolute;
+
+                right: 0;
+                bottom: 160px;
+
+                display: flex;
+                align-items: center;
+
+                gap: 12px;
+            }
+
+            .age {
+                border-left: 3px solid white;
+
+                padding: 8px 30px 8px 12px;
+
+                background: rgba(0,0,0,.4);
+
+                font-size: 14px;
+            }
+
+            .sound-button {
+                width: 42px;
+                height: 42px;
+
+                border: 1px solid rgba(255,255,255,.6);
+
+                border-radius: 50%;
+
+                background: rgba(0,0,0,.35);
+
+                color: white;
+
+                cursor: pointer;
+            }
+
+
+            /* =========================================================
+               MAIN CONTENT
+            ========================================================= */
+
+            .content {
+                position: relative;
+
+                z-index: 5;
+
+                margin-top: -100px;
+
+                padding-bottom: 70px;
+            }
+
+            .section {
+                margin-bottom: 42px;
+            }
+
+            .section-header {
+                display: flex;
+                align-items: center;
+
+                padding: 0 4%;
+
+                margin-bottom: 14px;
+            }
+
+            .section-title {
+                font-size: 21px;
+                font-weight: 700;
+            }
+
+            .explore {
+                color: #54b9c5;
+
+                font-size: 13px;
+
+                margin-left: 14px;
+
+                opacity: 0;
+
+                transition: .3s;
+            }
+
+            .section-header:hover .explore {
+                opacity: 1;
+            }
+
+
+            /* =========================================================
+               MOVIE ROW
+            ========================================================= */
+
+            .movie-container {
+                position: relative;
+            }
+
+            .movie-row {
+                display: flex;
+
+                gap: 7px;
+
+                overflow-x: auto;
+
+                padding: 15px 4% 30px;
+
+                scrollbar-width: none;
+
+                scroll-behavior: smooth;
+            }
+
+            .movie-row::-webkit-scrollbar {
+                display: none;
+            }
+
+
+            /* =========================================================
+               MOVIE CARD
+            ========================================================= */
+
+            .movie-card {
+                position: relative;
+
+                flex: 0 0 220px;
+
+                height: 320px;
+
+                border-radius: 5px;
+
+                overflow: hidden;
+
+                background: #222;
+
+                cursor: pointer;
+
+                transition:
+                    transform .35s ease,
+                    box-shadow .35s ease;
+
+                transform-origin: center;
+            }
+
+            .movie-card:hover {
+                transform: scale(1.12);
+
+                z-index: 20;
+
+                box-shadow: 0 15px 35px rgba(0,0,0,.7);
+            }
+
+            .movie-card img {
+                width: 100%;
+                height: 100%;
+
+                object-fit: cover;
+
+                display: block;
+
+                transition: transform .4s;
+            }
+
+            .movie-card:hover img {
+                transform: scale(1.04);
+            }
+
+            .movie-overlay {
+                position: absolute;
+
+                left: 0;
+                right: 0;
+                bottom: 0;
+
+                padding: 70px 14px 14px;
+
+                background: linear-gradient(
+                    transparent,
+                    rgba(0,0,0,.95)
+                );
+
+                opacity: 0;
+
+                transition: opacity .3s;
+            }
+
+            .movie-card:hover .movie-overlay {
+                opacity: 1;
+            }
+
+            .movie-name {
+                font-size: 15px;
+                font-weight: 700;
+
+                margin-bottom: 8px;
+            }
+
+            .movie-info {
+                display: flex;
+                gap: 9px;
+
+                color: #ccc;
+
+                font-size: 11px;
+            }
+
+            .movie-match {
+                color: #46d369;
+                font-weight: 700;
+            }
+
+            .movie-actions {
+                display: flex;
+                gap: 6px;
+
+                margin-bottom: 10px;
+            }
+
+            .round-btn {
+                width: 30px;
+                height: 30px;
+
+                border-radius: 50%;
+
+                border: 1px solid #aaa;
+
+                background: #222;
+
+                color: white;
+
+                cursor: pointer;
+            }
+
+            .round-btn:first-child {
+                background: white;
+                color: black;
+
+                border-color: white;
+            }
+
+
+            /* =========================================================
+               TOP 10
+            ========================================================= */
+
+            .top-card {
+                position: relative;
+
+                flex: 0 0 250px;
+
+                height: 350px;
+
+                display: flex;
+                align-items: flex-end;
+
+                overflow: hidden;
+
+                border-radius: 5px;
+
+                background: #181818;
+            }
+
+            .top-card img {
+                width: 190px;
+                height: 100%;
+
+                object-fit: cover;
+
+                margin-left: 60px;
+            }
+
+            .rank {
+                position: absolute;
+
+                bottom: -15px;
+                left: -10px;
+
+                font-size: 150px;
+                line-height: .8;
+
+                font-weight: 900;
+
+                color: #000;
+
+                -webkit-text-stroke: 3px #777;
+
+                z-index: 2;
+            }
+
+            .top-card:hover {
+                transform: scale(1.08);
+
+                transition: .3s;
+            }
+
+
+            /* =========================================================
+               CONTINUE WATCHING
+            ========================================================= */
+
+            .continue-card {
+                flex: 0 0 300px;
+
+                background: #222;
+
+                border-radius: 4px;
+
+                overflow: hidden;
+            }
+
+            .continue-image {
+                position: relative;
+
+                height: 170px;
+            }
+
+            .continue-image img {
+                width: 100%;
+                height: 100%;
+
+                object-fit: cover;
+            }
+
+            .play-small {
+                position: absolute;
+
+                right: 12px;
+                bottom: 12px;
+
+                width: 38px;
+                height: 38px;
+
+                border-radius: 50%;
+
+                border: none;
+
+                background: white;
+
+                color: black;
+
+                cursor: pointer;
+            }
+
+            .continue-info {
+                padding: 12px 14px;
+            }
+
+            .continue-title {
+                font-weight: 600;
+
+                margin-bottom: 10px;
+            }
+
+            .progress {
+                height: 3px;
+
+                background: #555;
+
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                height: 100%;
+
+                background: var(--netflix-red);
+            }
+
+
+            /* =========================================================
+               ROW ARROWS
+            ========================================================= */
+
+            .row-arrow {
+                position: absolute;
+
+                top: 50%;
+
+                transform: translateY(-50%);
+
+                width: 45px;
+                height: 90px;
+
+                border: none;
+
+                background: rgba(0,0,0,.65);
+
+                color: white;
+
+                font-size: 35px;
+
+                cursor: pointer;
+
+                z-index: 50;
+
+                opacity: 0;
+
+                transition: opacity .2s;
+            }
+
+            .movie-container:hover .row-arrow {
+                opacity: 1;
+            }
+
+            .row-arrow.left {
+                left: 0;
+            }
+
+            .row-arrow.right {
+                right: 0;
+            }
+
+
+            /* =========================================================
+               MODAL
+            ========================================================= */
+
+            .modal {
+                position: fixed;
+
+                inset: 0;
+
+                background: rgba(0,0,0,.8);
+
+                display: none;
+
+                align-items: center;
+                justify-content: center;
+
+                z-index: 2000;
+
+                padding: 20px;
+            }
+
+            .modal.active {
+                display: flex;
+            }
+
+            .modal-content {
+                position: relative;
+
+                width: min(900px, 100%);
+
+                max-height: 90vh;
+
+                overflow-y: auto;
+
+                background: #181818;
+
+                border-radius: 8px;
+
+                box-shadow: 0 20px 60px black;
+            }
+
+            .modal-hero {
+                height: 400px;
+
+                background:
+                    linear-gradient(
+                        to top,
+                        #181818,
+                        transparent 60%
+                    ),
+                    url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=80")
+                    center/cover;
+            }
+
+            .modal-body {
+                padding: 0 40px 40px;
+            }
+
+            .modal-title {
+                font-size: 35px;
+                font-weight: 800;
+
+                margin-bottom: 15px;
+            }
+
+            .modal-description {
+                color: #ddd;
+
+                line-height: 1.6;
+
+                max-width: 700px;
+            }
+
+            .close-modal {
+                position: absolute;
+
+                top: 15px;
+                right: 15px;
+
+                width: 40px;
+                height: 40px;
+
+                border: none;
+
+                border-radius: 50%;
+
+                background: #181818;
+
+                color: white;
+
+                font-size: 20px;
+
+                cursor: pointer;
+
+                z-index: 10;
+            }
+
+
+            /* =========================================================
+               FOOTER
+            ========================================================= */
+
+            footer {
+                padding: 70px 8% 40px;
+
+                color: #777;
+            }
+
+            .footer-links {
+                display: grid;
+
+                grid-template-columns: repeat(4, 1fr);
+
+                gap: 15px;
+
+                margin-bottom: 35px;
+            }
+
+            .footer-links a {
+                color: #777;
+
+                text-decoration: none;
+
+                font-size: 13px;
+            }
+
+            .footer-links a:hover {
+                text-decoration: underline;
+            }
+
+            .copyright {
+                font-size: 12px;
+            }
+
+
+            /* =========================================================
+               MOBILE
+            ========================================================= */
+
+            @@media (max-width: 900px) {
+
+                .nav-menu {
+                    display: none;
+                }
+
+                .logo {
+                    margin-right: 0;
+                }
+
+                .hero {
+                    height: 75vh;
+
+                    background-position: center;
+                }
+
+                .hero-content {
+                    left: 6%;
+                    right: 6%;
+
+                    top: 34%;
+                }
+
+                .hero-description {
+                    font-size: 14px;
+                }
+
+                .hero-rating {
+                    display: none;
+                }
+
+                .movie-card {
+                    flex-basis: 155px;
+                    height: 225px;
+                }
+
+                .top-card {
+                    flex-basis: 190px;
+                    height: 280px;
+                }
+
+                .top-card img {
+                    width: 150px;
+                    margin-left: 40px;
+                }
+
+                .rank {
+                    font-size: 110px;
+                }
+
+                .continue-card {
+                    flex-basis: 240px;
+                }
+
+                .footer-links {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @@media (max-width: 500px) {
+
+                .navbar {
+                    height: 55px;
+                }
+
+                .logo {
+                    font-size: 24px;
+                }
+
+                .nav-right {
+                    gap: 12px;
+                }
+
+                .profile img {
+                    width: 28px;
+                    height: 28px;
+                }
+
+                .hero {
+                    min-height: 550px;
+                }
+
+                .hero-title {
+                    font-size: 42px;
+                }
+
+                .hero-content {
+                    top: 30%;
+                }
+
+                .hero-buttons {
+                    flex-wrap: wrap;
+                }
+
+                .btn {
+                    padding: 10px 18px;
+                    font-size: 14px;
+                }
+
+                .content {
+                    margin-top: -50px;
+                }
+
+                .section-title {
+                    font-size: 18px;
+                }
+
+                .movie-card {
+                    flex-basis: 135px;
+                    height: 195px;
+                }
+
+                .footer-links {
+                    grid-template-columns: 1fr;
+                }
+
+                .modal-body {
+                    padding: 0 20px 25px;
+                }
+
+                .modal-hero {
+                    height: 280px;
+                }
+            }
+
+    </style>
+</head>
+
+<body>
+
+
+    <!-- =============================================================
+     NAVIGATION
+============================================================= -->
+
+    <header class="navbar" id="navbar">
+
+        <div class="logo">
+            NETFLIX
+        </div>
+
+        <ul class="nav-menu">
+
+            <li>
+                <a class="active" href="#">Home</a>
+            </li>
+
+            <li>
+                <a href="#">TV Shows</a>
+            </li>
+
+            <li>
+                <a href="#">Movies</a>
+            </li>
+
+            <li>
+                <a href="#">New & Popular</a>
+            </li>
+
+            <li>
+                <a href="#">My List</a>
+            </li>
+
+        </ul>
+
+
+        <div class="nav-right">
+
+            <span class="nav-icon">
+                🔍
+            </span>
+
+            <span class="nav-icon">
+                🔔
+            </span>
+
+            <div class="profile">
+
+                <img src="https://i.pravatar.cc/100?img=12"
+                     alt="Profile">
+
+                <span class="profile-arrow">
+                    ▼
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =============================================================
+     HERO
+============================================================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+
+                <span class="n-logo">N</span>
+
+                <span>S E R I E S</span>
+
+            </div>
+
+
+            <h1 class="hero-title">
+                Stranger Things
+            </h1>
+
+
+            <div class="hero-meta">
+
+                <span class="match">
+                    98% Match
+                </span>
+
+                <span>
+                    2022
+                </span>
+
+                <span class="rating">
+                    TV-14
+                </span>
+
+                <span>
+                    4 Seasons
+                </span>
+
+                <span>
+                    HD
+                </span>
+
+            </div>
+
+
+            <p class="hero-description">
+
+                When a young boy vanishes, a small town uncovers a mystery
+                involving secret experiments, terrifying supernatural forces,
+                and one strange little girl.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <button class="btn btn-play"
+                        onclick="playMovie()">
+
+                    ▶
+
+                    Play
+
+                </button>
+
+
+                <button class="btn btn-info"
+                        onclick="openModal()">
+
+                    ⓘ
+
+                    More Info
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-rating">
+
+            <button class="sound-button">
+                🔊
+            </button>
+
+            <div class="age">
+                TV-14
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =============================================================
+     MOVIE CONTENT
+============================================================= -->
+
+    <main class="content">
+
+
+        <!-- =========================================================
+         CONTINUE WATCHING
+    ========================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Continue Watching for You
+                </h2>
+
+                <span class="explore">
+                    Explore All →
+                </span>
+
+            </div>
+
+
+            <div class="movie-container">
+
+                <button class="row-arrow left"
+                        onclick="scrollRow(this, -500)">
+                    ‹
+                </button>
+
+
+                <div class="movie-row">
+
+                    @for (int i = 1; i <= 6; i++)
+                    {
+                        <div class="continue-card">
+
+                            <div class="continue-image">
+
+                                <img src="https://picsum.photos/500/300?random=@(100 + i)"
+                                     alt="Continue Watching">
+
+                                <button class="play-small">
+                                    ▶
+                                </button>
+
+                            </div>
+
+
+                            <div class="continue-info">
+
+                                <div class="continue-title">
+                                    Movie Episode @i
+                                </div>
+
+                                <div class="progress">
+
+                                    <div class="progress-bar"
+                                         style="width:@(20 + i * 10)%">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+
+                <button class="row-arrow right"
+                        onclick="scrollRow(this, 500)">
+                    ›
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+         TRENDING
+    ========================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Trending Now
+                </h2>
+
+                <span class="explore">
+                    Explore All →
+                </span>
+
+            </div>
+
+
+            <div class="movie-container">
+
+                <button class="row-arrow left"
+                        onclick="scrollRow(this, -500)">
+                    ‹
+                </button>
+
+
+                <div class="movie-row">
+
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <div class="movie-card"
+                             onclick="openModal()">
+
+                            <img src="https://picsum.photos/400/600?random=@(i + 200)"
+                                 alt="Trending movie">
+
+                            <div class="movie-overlay">
+
+                                <div class="movie-actions">
+
+                                    <button class="round-btn">
+                                        ▶
+                                    </button>
+
+                                    <button class="round-btn">
+                                        +
+                                    </button>
+
+                                    <button class="round-btn">
+                                        👍
+                                    </button>
+
+                                </div>
+
+                                <div class="movie-name">
+                                    Trending Movie @i
+                                </div>
+
+                                <div class="movie-info">
+
+                                    <span class="movie-match">
+                                        96% Match
+                                    </span>
+
+                                    <span>
+                                        2025
+                                    </span>
+
+                                    <span>
+                                        2h 8m
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+
+                <button class="row-arrow right"
+                        onclick="scrollRow(this, 500)">
+                    ›
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+         TOP 10
+    ========================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Top 10 Movies Today
+                </h2>
+
+            </div>
+
+
+            <div class="movie-container">
+
+                <div class="movie-row">
+
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <div class="top-card">
+
+                            <span class="rank">
+                                @i
+                            </span>
+
+                            <img src="https://picsum.photos/400/600?random=@(i + 300)"
+                                 alt="Top @i">
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+         POPULAR
+    ========================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Popular on Netflix
+                </h2>
+
+                <span class="explore">
+                    Explore All →
+                </span>
+
+            </div>
+
+
+            <div class="movie-container">
+
+                <button class="row-arrow left"
+                        onclick="scrollRow(this, -500)">
+                    ‹
+                </button>
+
+
+                <div class="movie-row">
+
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <div class="movie-card"
+                             onclick="openModal()">
+
+                            <img src="https://picsum.photos/400/600?random=@(i + 400)"
+                                 alt="Popular movie">
+
+                            <div class="movie-overlay">
+
+                                <div class="movie-actions">
+
+                                    <button class="round-btn">
+                                        ▶
+                                    </button>
+
+                                    <button class="round-btn">
+                                        +
+                                    </button>
+
+                                    <button class="round-btn">
+                                        👍
+                                    </button>
+
+                                </div>
+
+                                <div class="movie-name">
+                                    Popular Movie @i
+                                </div>
+
+                                <div class="movie-info">
+
+                                    <span class="movie-match">
+                                        94% Match
+                                    </span>
+
+                                    <span>
+                                        2025
+                                    </span>
+
+                                    <span>
+                                        1h 52m
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+
+                <button class="row-arrow right"
+                        onclick="scrollRow(this, 500)">
+                    ›
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+         ACTION
+    ========================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Action & Adventure
+                </h2>
+
+            </div>
+
+
+            <div class="movie-container">
+
+                <div class="movie-row">
+
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <div class="movie-card"
+                             onclick="openModal()">
+
+                            <img src="https://picsum.photos/400/600?random=@(i + 500)"
+                                 alt="Action movie">
+
+                            <div class="movie-overlay">
+
+                                <div class="movie-actions">
+
+                                    <button class="round-btn">
+                                        ▶
+                                    </button>
+
+                                    <button class="round-btn">
+                                        +
+                                    </button>
+
+                                </div>
+
+                                <div class="movie-name">
+                                    Action Movie @i
+                                </div>
+
+                                <div class="movie-info">
+
+                                    <span class="movie-match">
+                                        91% Match
+                                    </span>
+
+                                    <span>
+                                        2024
+                                    </span>
+
+                                    <span>
+                                        2h 15m
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================================================
+         COMEDY
+    ========================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2 class="section-title">
+                    Comedies
+                </h2>
+
+            </div>
+
+
+            <div class="movie-container">
+
+                <div class="movie-row">
+
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <div class="movie-card"
+                             onclick="openModal()">
+
+                            <img src="https://picsum.photos/400/600?random=@(i + 600)"
+                                 alt="Comedy">
+
+                            <div class="movie-overlay">
+
+                                <div class="movie-actions">
+
+                                    <button class="round-btn">
+                                        ▶
+                                    </button>
+
+                                    <button class="round-btn">
+                                        +
+                                    </button>
+
+                                </div>
+
+                                <div class="movie-name">
+                                    Comedy Movie @i
+                                </div>
+
+                                <div class="movie-info">
+
+                                    <span class="movie-match">
+                                        89% Match
+                                    </span>
+
+                                    <span>
+                                        2025
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =============================================================
+     MOVIE MODAL
+============================================================= -->
+
+    <div class="modal" id="movieModal">
+
+        <div class="modal-content">
+
+            <button class="close-modal"
+                    onclick="closeModal()">
+
+                ×
+
+            </button>
+
+
+            <div class="modal-hero">
+            </div>
+
+
+            <div class="modal-body">
+
+                <h2 class="modal-title">
+                    Stranger Things
+                </h2>
+
+
+                <div class="hero-meta">
+
+                    <span class="match">
+                        98% Match
+                    </span>
+
+                    <span>
+                        2022
+                    </span>
+
+                    <span class="rating">
+                        TV-14
+                    </span>
+
+                    <span>
+                        4 Seasons
+                    </span>
+
+                </div>
+
+
+                <p class="modal-description">
+
+                    When a young boy disappears, his friends and family
+                    uncover a mystery involving secret experiments and
+                    supernatural forces.
+
+                </p>
+
+
+                <div class="hero-buttons"
+                     style="margin-top:25px;">
+
+                    <button class="btn btn-play"
+                            onclick="playMovie()">
+
+                        ▶ Play
+
+                    </button>
+
+                    <button class="btn btn-info">
+
+                        + My List
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =============================================================
+     FOOTER
+============================================================= -->
+
+    <footer>
+
+        <div class="footer-links">
+
+            <a href="#">Audio and Subtitles</a>
+
+            <a href="#">Media Center</a>
+
+            <a href="#">Privacy</a>
+
+            <a href="#">Contact Us</a>
+
+            <a href="#">Audio Description</a>
+
+            <a href="#">Investor Relations</a>
+
+            <a href="#">Terms of Use</a>
+
+            <a href="#">Help Center</a>
+
+            <a href="#">Jobs</a>
+
+            <a href="#">Cookie Preferences</a>
+
+            <a href="#">Gift Cards</a>
+
+            <a href="#">Legal Notices</a>
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 Netflix Clone — Educational Project
+
+        </div>
+
+    </footer>
+
+
+
+    <script>
+
+            /* =========================================================
+               NAVBAR
+            ========================================================= */
+
+            window.addEventListener("scroll", function () {
+
+                const navbar = document.getElementById("navbar");
+
+                if (window.scrollY > 50) {
+
+                    navbar.classList.add("scrolled");
+
+                } else {
+
+                    navbar.classList.remove("scrolled");
+
+                }
+
+            });
+
+
+            /* =========================================================
+               HORIZONTAL SCROLL
+            ========================================================= */
+
+            function scrollRow(button, amount) {
+
+                const container =
+                    button.parentElement.querySelector(".movie-row");
+
+                container.scrollBy({
+                    left: amount,
+                    behavior: "smooth"
+                });
+
+            }
+
+
+            /* =========================================================
+               MODAL
+            ========================================================= */
+
+            function openModal() {
+
+                document
+                    .getElementById("movieModal")
+                    .classList.add("active");
+
+                document.body.style.overflow = "hidden";
+
+            }
+
+
+            function closeModal() {
+
+                document
+                    .getElementById("movieModal")
+                    .classList.remove("active");
+
+                document.body.style.overflow = "";
+
+            }
+
+
+            /* Close modal when clicking outside */
+
+            document
+                .getElementById("movieModal")
+                .addEventListener("click", function (event) {
+
+                    if (event.target === this) {
+
+                        closeModal();
+
+                    }
+
+                });
+
+
+            /* Escape key */
+
+            document.addEventListener("keydown", function (event) {
+
+                if (event.key === "Escape") {
+
+                    closeModal();
+
+                }
+
+            });
+
+
+            /* =========================================================
+               PLAY
+            ========================================================= */
+
+            function playMovie() {
+
+                alert("Opening movie player...");
+
+            }
+
+    </script>
+
+</body>
+</html>
