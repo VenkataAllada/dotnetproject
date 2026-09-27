@@ -17,5 +17,5 @@ variable "ASP_name" {
 variable "App_name" {
   description = "The name of the application"
   type        = string
-  default     = "nfenglish-dev-app-01"
+  default     = "nfenglish-dev-app-001"
 }
