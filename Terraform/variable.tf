@@ -12,10 +12,10 @@ variable "location" {
 variable "ASP_name" {
   description = "The name of the application service plan"
   type        = string
-  default     = "netflix-english-movies-asp"
+  default     = "nfenglish-dev-asp"
 }
 variable "App_name" {
   description = "The name of the application"
   type        = string
-  default     = "web-app-netflix-english-movies2345"
+  default     = "nfenglish-dev-app-01"
 }
