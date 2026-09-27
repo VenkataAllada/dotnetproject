@@ -58,6 +58,6 @@ jobs:
           - name: Deploy to Azure Web App
             uses: azure/webapps-deploy@v2
             with:
-              app-name: web-app-netflix-english-movies2345
+              app-name: nfenglish-dev-app-01
               package: ./netflix-english-movies/publish
     
